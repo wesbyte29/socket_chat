@@ -6,12 +6,12 @@
     <style>
       body { margin: 0; padding-bottom: 3rem; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
 
-      #form { background: rgba(0, 0, 0, 0.15); padding: 0.25rem; position: fixed; bottom: 0; left: 0; right: 0; display: flex; height: 3rem; box-sizing: border-box; backdrop-filter: blur(10px); }
+      #form1 { background: rgba(0, 0, 0, 0.15); padding: 0.25rem; position: fixed; bottom: 0; left: 0; right: 0; display: flex; height: 3rem; box-sizing: border-box; backdrop-filter: blur(10px); }
       #input { border: none; padding: 0 1rem; flex-grow: 1; border-radius: 2rem; margin: 0.25rem; }
       #input:focus { outline: none; }
-      #form > button { background: #333; border: none; padding: 0 1rem; margin: 0.25rem; border-radius: 3px; outline: none; color: #fff; }
+      #form1 > button { background: #333; border: none; padding: 0 1rem; margin: 0.25rem; border-radius: 3px; outline: none; color: #fff; }
 
-      #usernameForm { position: fixed; top: 0; left: 0; width: 100%; z-index: 999; } 
+      #usernameForm { position: fixed; top: 0; right: 0; width: 25%; z-index: 999; } 
 
       #messages { list-style-type: none; margin: 0; padding: 0; }
       #messages > li { padding: 0.5rem 1rem; }
@@ -20,7 +20,7 @@
   </head>
   <body>
     <ul id="messages"></ul>
-    <form id="form" action="">
+    <form id="form1" action="">
       <input id="input" autocomplete="off" /><button>Send</button>
     </form>
 
@@ -36,7 +36,11 @@
         }
       });
 
-      const form = document.getElementById('form');
+      // don't let the user send a msg until he makes a username
+      form1.querySelector('input').disabled = true;
+      form1.querySelector('button').disabled = true; 
+
+      const form = document.getElementById('form1');
       const input = document.getElementById('input');
       const messages = document.getElementById('messages');
       const username = document.getElementById('username');
@@ -51,13 +55,16 @@
          }
       })
 
-      username_form.addEventListener('submit', (e) => { // this is for setting the username, now you just need a form
+      username_form.addEventListener('submit', (e) => {
         e.preventDefault();
         if(username_input.value) {
           socket.emit('set username', username_input.value);
           input.value = '';
           usernameForm.querySelector('input').disabled = true; // Disable input field
           usernameForm.querySelector('button').disabled = true;
+
+          form.querySelector('input').disabled = false;
+          form.querySelector('button').disabled = false;
         }
       })
 

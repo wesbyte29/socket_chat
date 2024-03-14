@@ -127,3 +127,4 @@ dist
 .pnp.*
 chat.db
 chat.db
+*.db
