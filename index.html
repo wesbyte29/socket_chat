@@ -11,6 +11,8 @@
       #input:focus { outline: none; }
       #form > button { background: #333; border: none; padding: 0 1rem; margin: 0.25rem; border-radius: 3px; outline: none; color: #fff; }
 
+      #usernameForm { position: fixed; top: 0; left: 0; width: 100%; z-index: 999; } 
+
       #messages { list-style-type: none; margin: 0; padding: 0; }
       #messages > li { padding: 0.5rem 1rem; }
       #messages > li:nth-child(odd) { background: #efefef; }
@@ -21,6 +23,11 @@
     <form id="form" action="">
       <input id="input" autocomplete="off" /><button>Send</button>
     </form>
+
+    <form id="usernameForm">
+      <input id="usernameInput" autocomplete="off" /><button>Set Username</button>
+    </form>
+
     <script src="/socket.io/socket.io.js"></script>
     <script>
       const socket = io({
@@ -32,6 +39,9 @@
       const form = document.getElementById('form');
       const input = document.getElementById('input');
       const messages = document.getElementById('messages');
+      const username = document.getElementById('username');
+      const username_form = document.getElementById('usernameForm');
+      const username_input = document.getElementById('usernameInput');
 
       form.addEventListener('submit', (e) => {
          e.preventDefault();
@@ -41,9 +51,19 @@
          }
       })
 
-      socket.on('chat message', (msg, serverOffset) => {
+      username_form.addEventListener('submit', (e) => { // this is for setting the username, now you just need a form
+        e.preventDefault();
+        if(username_input.value) {
+          socket.emit('set username', username_input.value);
+          input.value = '';
+          usernameForm.querySelector('input').disabled = true; // Disable input field
+          usernameForm.querySelector('button').disabled = true;
+        }
+      })
+
+      socket.on('chat message', (username, msg, serverOffset) => {
         const item = document.createElement('li');
-        item.textContent = msg;
+        item.textContent = (username + ':' + ' ' + msg);
         messages.appendChild(item);
         window.scrollTo(0, document.body.scrollHeight);
         socket.auth.serverOffset = serverOffset;

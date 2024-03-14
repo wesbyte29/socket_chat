@@ -51,7 +51,12 @@ io.on('connection', async (socket) => {
 
 
       console.log('message: ', msg, result.lastID);
-      io.emit('chat message', msg, result.lastID);
+      io.emit('chat message', socket.username, msg, result.lastID);
+   })
+
+   socket.on("set username", (username) => {
+      socket.username = username;
+      console.log("Username set: ", username);
    })
 
    if(!socket.recovered) {
